@@ -1,10 +1,24 @@
 let MyName = "";
 const newtab = !document.URL.endsWith(".id.repl.co/"); 
 
+var curr = 255;
+var curg = 0;
+var curb = 0;
+
+function changecol(r, g, b){
+  curr = Number(r) //Brag-umber
+  curg = Number(g) //Brag-umber
+  curb = Number(b) //Brag-umber
+}
+
+
+// in theorie its working
+let pixelSize = 10;
+
 function setup() {
   createCanvas(window.innerWidth, window.innerHeight);
   background(153);
-  
+  stroke(0,0)  
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -14,6 +28,11 @@ if(newtab){
   socket.on("changeName", (data)=>{
     MyName = data
   })
+  socket.on("setPixel", (data)=>{
+    console.log(data);
+    fill(data['r'], data['g'], data['b']);
+    rect(data['x']*pixelSize + 10, data['y']*pixelSize + 50, pixelSize, pixelSize);
+  })
   socket.on("loadPixel", (data) => {
     const x = data['x'];
     const y = data['y'];
@@ -21,15 +40,26 @@ if(newtab){
     const g = data['g'];
     const b = data['b'];
     for (let i = 0; i < x.length; i++) { // no my computer cant play music
-      pixelX = x[i];
-      pixelY = y[i];
+      let pixelX = x[i];
+      let pixelY = y[i];
       fill(r[i], g[i], b[i]);
-      stroke(0,0)
-      rect(pixelX*2 + 10, pixelY*2 + 50, 2, 2);
+      rect(pixelX*pixelSize + 10, pixelY*pixelSize + 50, pixelSize, pixelSize);
     }
+
+    // hitbox
   })
+  function mouseClicked() {
+    let pixelX = Math.floor((mouseX - 10) / pixelSize);
+    let pixelY = Math.floor((mouseY - 50) / pixelSize);
+      socket.emit("setPixel", {
+        "x": pixelX,
+        "y": pixelY,
+        "r": curr,
+        "g": curg,
+        "b": curb,
+      })
+    }
   function draw(){
-    // background(0, 0, 0)
     fill(100, 255);
     textAlign(LEFT, TOP);
     textSize(25)

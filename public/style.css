@@ -1,8 +1,37 @@
 *{
   overflow: hidden;
 }
-
 body, html{
   margin: 0px;
   overflow: hidden;
+}
+.btn{
+  margin: 30px;
+  border: 0px;
+}
+#red{
+  background: red;
+}
+#blue{
+  background: #2b00ff;
+  color: white;
+}
+#green{
+  background: #2fa76f;
+  color: white;
+}
+#black{
+  background: black;
+  color: white;
+}
+#white{
+  background: white;
+  color: black;
+}
+.con{
+  border: none;
+  radius: 0px;
+  position: absolute;
+  top: 0px;
+  left: 100px;
 }

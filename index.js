@@ -18,8 +18,8 @@ let user = []
 let pixels = []
 
 // testing variabels
-const width = 20;
-const height = 20;
+const width = 250;
+const height = 250;
 
 // Class to create the pixel
 class pixel {
@@ -55,7 +55,7 @@ function pixelDataToJSON() {
 
 for(let x=0; x<width; x++){
   for(let y=0; y<height; y++){
-    const px = new pixel(x, y, [255, 255, 255]);
+    const px = new pixel(x, y, [125, 124, 122]);
     pixels.push(px);
   }
 }
@@ -85,6 +85,13 @@ io.on("connect", function(socket) {
       console.log('\x1b[1m\x1b[31mdisconnected: @'+username+" \x1b[40mRemaining: "+user.length+"\x1b[0m");
   
       
+    })
+    socket.on("setPixel", (data) => {
+      if (0 < data['x'] && data['x'] < width && 0 < data['y'] && data['y'] < height) {
+        let index = data['x'] * 250 + data['y'];
+        pixels[index].color = [data['r'], data['g'], data['b']];
+        io.emit("setPixel", data);
+      }
     })
   }
 })
