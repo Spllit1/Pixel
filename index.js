@@ -18,9 +18,8 @@ let user = []
 let pixels = []
 
 // testing variabels
-let curx, cury; 
-let width = 250;
-let height = 
+const width = 20;
+const height = 20;
 
 // Class to create the pixel
 class pixel {
@@ -37,50 +36,54 @@ class pixel {
 
 
 function pixelDataToJSON() {
-  for (i = 0; i < 250*250; i++)
-}
-
-for(let y=0; y<250; y++){
-  for(let y=0; y<250; y++){
-    const px = new pixel(curx, cury, [255, 20, 205])
-    pixels.push(px)
-    // console.log(pixels)
-    
-    curx += 1
+  let jsonData = {
+    'x':[], 
+    'y':[], 
+    'r':[],
+    'g':[],
+    'b':[]
+  };
+  for (i = 0; i < width*height; i++) {
+    jsonData['x'].push(pixels[i].x);
+    jsonData['y'].push(pixels[i].y);
+    jsonData['r'].push(pixels[i].color[0]);
+    jsonData['g'].push(pixels[i].color[1]);
+    jsonData['b'].push(pixels[i].color[2]);
   }
-  cury += 1
+  return jsonData;
 }
 
-
-
-setInterval(()=>{
-  console.log(user)
-}, 1000)
+for(let x=0; x<width; x++){
+  for(let y=0; y<height; y++){
+    const px = new pixel(x, y, [255, 255, 255]);
+    pixels.push(px);
+  }
+}
 
 // when user connects
 io.on("connect", function(socket) {
   let username = socket.handshake.headers["x-replit-user-name"]
-  // serves name to client
-  socket.emit("changeName", username)
   // if user already joined
   if (user.includes(username)) {
     // quits connection
     socket.disconnect();
-    console.log('User @'+username+' already joined');
+    console.log('\x1b[1m\x1b[33mUser @'+username+' already joined\x1b[0m');
   }
   else {
-    console.log(username)
-    user.push(username)
-  
+    // serves name to client
+    socket.emit("changeName", username);
+    socket.emit("loadPixel", pixelDataToJSON());
+    user.push(username);
+    console.log("\x1b[1m\x1b[32mjoined: @"+username+" \x1b[40mRemaining: "+user.length+"\x1b[0m");
     // event when diconnecting
     socket.on("disconnect", function() {
-      console.log('disconnected: @'+username);
-      const index = user.indexOf(username);
-  
       // removes user from list
+      const index = user.indexOf(username);
       if (index > -1) {
         user.splice(index, 1); 
       }
+      console.log('\x1b[1m\x1b[31mdisconnected: @'+username+" \x1b[40mRemaining: "+user.length+"\x1b[0m");
+  
       
     })
   }
